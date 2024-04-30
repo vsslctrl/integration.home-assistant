@@ -1,0 +1,26 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Set up a new VSSL",
+        "description": "Enter the IP address of each zone of your VSSL device. Zone 1 is required",
+        "data": {
+          "ZONE_1": "Zone 1 IP address",
+          "ZONE_2": "Zone 2 IP address",
+          "ZONE_3": "Zone 3 IP address",
+          "ZONE_4": "Zone 4 IP address",
+          "ZONE_5": "Zone 5 IP address",
+          "ZONE_6": "Zone 6 IP address"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]",
+      "invalid_ip": "One or more IP address, is invalid",
+      "unknown": "[%key:common::config_flow::error::unknown%]"
+    },
+    "abort": {
+      "zone_initialisation": "Failed to init one or more zones. Check Log."
+    }
+  }
+}
