@@ -40,8 +40,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             # TODO handle proper unloading when cant connect
             #
             #
+            #
+            # If vssl needs to be reinit because startup failed, we will get 
+            # an ereror that event_bus or queue is in different event loop
+            #
+            #
 
-            
 
     except Exception as e:
         raise ConfigEntryNotReady from e

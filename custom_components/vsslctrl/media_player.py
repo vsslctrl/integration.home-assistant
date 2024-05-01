@@ -39,6 +39,8 @@ async def async_setup_entry(
 
 
 class VSSLZone(MediaPlayerEntity):
+
+    _attr_should_poll = False
     _attr_media_content_type = MediaType.MUSIC
     _attr_device_class = MediaPlayerDeviceClass.SPEAKER
 
@@ -52,8 +54,8 @@ class VSSLZone(MediaPlayerEntity):
         | MediaPlayerEntityFeature.VOLUME_MUTE
         | MediaPlayerEntityFeature.VOLUME_SET
         | MediaPlayerEntityFeature.VOLUME_STEP
-        | MediaPlayerEntityFeature.REPEAT_SET
-        | MediaPlayerEntityFeature.SHUFFLE_SET
+        # | MediaPlayerEntityFeature.REPEAT_SET
+        # | MediaPlayerEntityFeature.SHUFFLE_SET
     )
 
     def __init__(self, hass: HomeAssistant, zone: Zone, vssl: Vssl):
@@ -61,8 +63,8 @@ class VSSLZone(MediaPlayerEntity):
         self.zone = zone
         self.vssl = vssl
 
-        self._attr_unique_id = f"{zone.serial}_ZONE_{zone.id}"
-        self._media_position_updated_at = dt.utcnow()
+        self.unique_id = f"{zone.serial}_ZONE_{zone.id}"
+        self.media_position_updated_at = dt.utcnow()
 
         # Subscribe to events for this zone
         vssl.event_bus.subscribe("*", self._schedule_update_ha_state, zone.id)
@@ -72,20 +74,16 @@ class VSSLZone(MediaPlayerEntity):
             zone.id,
         )
 
-    @property
-    def should_poll(self) -> bool:
-        """Return True if polling is needed to update the state for the device."""
-        return False
 
     #
     # Wrapper for the event bus events
     #
     async def _schedule_update_ha_state(self, data, entity, event_type) -> None:
-        print(f"update! {event_type} : {entity} : {data}")
-        await self.async_write_ha_state()
+        #print(f"update! {event_type} : {entity} : {data}")
+        self.async_write_ha_state()
     
     #
-    # Decorate Helper to check if zone is connected
+    # Decorate Helper to check if zone is connected when issuing commands
     # 
     def error_if_disconnected(func):
         async def wrapper(self, *args, **kwargs):
@@ -220,16 +218,11 @@ class VSSLZone(MediaPlayerEntity):
         """Position of current playing media in seconds."""
         return self.zone.track.progress / 1000
 
-    @property
-    def media_position_updated_at(self):
-        """When was the position of the current playing media"""
-        return self._media_position_updated_at
-
-    async def _update_progress_timestamp(self, data, entity, event_type) -> None:
+    async def _update_progress_timestamp(self, data, *args) -> None:
         if data is not None:
-            self._media_position_updated_at = dt.utcnow()
+            self.media_position_updated_at = dt.utcnow()
         else:
-            self._media_position_updated_at = None
+            self.media_position_updated_at = None
 
     async def async_media_seek(self, position: float) -> None:
         """Send seek command."""

@@ -31,9 +31,6 @@ STEP_USER_DATA_SCHEMA = vol.Schema(
     }
 )
 
-
-
-
 class ConfigFlow(ConfigFlow, domain=DOMAIN):
     """Handle a config flow for VSSL Controller."""
 
@@ -109,7 +106,7 @@ class ConfigFlow(ConfigFlow, domain=DOMAIN):
 
             await self.async_set_unique_id(vssl.serial)
 
-            await vssl.disconnect()
+            await vssl.shutdown()
 
         except Exception as e:
             _LOGGER.exception(e)
