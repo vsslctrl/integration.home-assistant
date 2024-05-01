@@ -72,23 +72,27 @@ class VSSLZone(MediaPlayerEntity):
             zone.id,
         )
 
+    @property
+    def should_poll(self) -> bool:
+        """Return True if polling is needed to update the state for the device."""
+        return False
+
     #
     # Wrapper for the event bus events
     #
     async def _schedule_update_ha_state(self, data, entity, event_type) -> None:
-        # print(f"update! {event_type} : {entity} : {data}")
-        self.async_schedule_update_ha_state()
+        print(f"update! {event_type} : {entity} : {data}")
+        await self.async_write_ha_state()
     
     #
     # Decorate Helper to check if zone is connected
     # 
     def error_if_disconnected(func):
         async def wrapper(self, *args, **kwargs):
-            print(f'connected? {self.zone.connected}')
             if self.zone.connected:
                 return await func(self, *args, **kwargs)
             else:
-                raise HomeAssistantError(f"Zone is disconnected: {self.zone.name}")
+                raise HomeAssistantError(f"Zone is disconnected: {self.zone.settings.name}")
         return wrapper
 
     @property
