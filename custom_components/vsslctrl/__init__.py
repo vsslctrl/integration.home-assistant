@@ -32,23 +32,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         if vssl.serial != entry.data.get(SERIAL):
             raise VsslCtrlException
 
-
-
-
-            #
-            #
-            # TODO handle proper unloading when cant connect
-            #
-            #
-            #
-            # If vssl needs to be reinit because startup failed, we will get 
-            # an ereror that event_bus or queue is in different event loop
-            #
-            #
-
-
     except Exception as e:
+        await vssl.shutdown() 
         raise ConfigEntryNotReady from e
+
 
     hass.data[DOMAIN][entry.entry_id] = vssl
 
@@ -58,9 +45,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+
+    print('async_unload_entry')
     """Unload a config entry."""
     if unload_ok := await hass.config_entries.async_unload_platforms(entry, PLATFORMS):
         vssl = hass.data[DOMAIN].pop(entry.entry_id)
-        await vssl.disconnect()
+        await vssl.shutdown() 
 
     return unload_ok

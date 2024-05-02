@@ -67,18 +67,17 @@ class VSSLZone(MediaPlayerEntity):
         self.media_position_updated_at = dt.utcnow()
 
         # Subscribe to events for this zone
-        vssl.event_bus.subscribe("*", self._schedule_update_ha_state, zone.id)
+        vssl.event_bus.subscribe(Vssl.Events.ALL, self._update_ha_state, zone.id)
         vssl.event_bus.subscribe(
             TrackMetadata.Events.PROGRESS_CHANGE,
             self._update_progress_timestamp,
             zone.id,
         )
 
-
     #
-    # Wrapper for the event bus events
+    # Wrapper for the event bus events to update state-machine
     #
-    async def _schedule_update_ha_state(self, data, entity, event_type) -> None:
+    async def _update_ha_state(self, data, entity, event_type) -> None:
         #print(f"update! {event_type} : {entity} : {data}")
         self.async_write_ha_state()
     
