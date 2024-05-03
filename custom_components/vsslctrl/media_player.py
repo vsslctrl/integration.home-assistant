@@ -133,7 +133,7 @@ class VSSLZone(MediaPlayerEntity):
     @property
     def repeat(self):
         """Return repeat mode."""
-        mode = self.zone.transport.repeat
+        mode = self.zone.transport.is_repeat
         if mode == ZoneTransport.Repeat.ONE:
             return RepeatMode.ONE
         elif mode == ZoneTransport.Repeat.ALL:
@@ -148,7 +148,7 @@ class VSSLZone(MediaPlayerEntity):
     @property
     def shuffle(self) -> bool | None:
         """Boolean if shuffle is enabled."""
-        return self.zone.transport.shuffle
+        return self.zone.transport.is_shuffle
 
     async def async_set_shuffle(self, shuffle: bool) -> None:
         """Set shuffle mode."""
@@ -205,7 +205,7 @@ class VSSLZone(MediaPlayerEntity):
     @property
     def media_image_url(self) -> str | None:
         """Image url of current playing media."""
-        return self.zone.track.cover_art
+        return self.zone.track.cover_art_url
 
     @property
     def media_duration(self):

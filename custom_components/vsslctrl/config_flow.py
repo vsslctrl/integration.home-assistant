@@ -101,7 +101,7 @@ class ConfigFlow(ConfigFlow, domain=DOMAIN):
 
             await vssl.initialise()
 
-            name = vssl.name
+            name = vssl.settings.name
             data = {SERIAL: vssl.serial, ZONES: zone_list}
 
             await self.async_set_unique_id(vssl.serial)
