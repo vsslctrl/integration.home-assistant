@@ -32,6 +32,15 @@ STEP_USER_DATA_SCHEMA = vol.Schema(
 )
 
 
+#
+#
+# TODO, a reset button is requred for each zone
+#
+# Discovery
+#
+#
+
+
 class ConfigFlow(ConfigFlow, domain=DOMAIN):
     """Handle a config flow for VSSL Controller."""
 
@@ -115,10 +124,16 @@ class ConfigFlow(ConfigFlow, domain=DOMAIN):
 
         return self.async_create_entry(title=name, data=data)
 
-    @staticmethod
-    def construct_unique_id(serial: str, zone_id: int) -> str:
-        """Construct the unique id"""
-        return f"{serial}-{zone_id}"
+    async def async_step_zeroconf(
+        self, discovery_info: zeroconf.ZeroconfServiceInfo
+    ) -> ConfigFlowResult:
+        """Handle zeroconf discovery."""
+        print(discovery_info)
+        # mac = dr.format_mac(discovery_info.properties["id"])
+        # await self.async_set_unique_id(mac)
+        # self._abort_if_unique_id_configured()
+        # self._discovered_host = discovery_info.hostname.rstrip(".")
+        # return await self.async_step_user()
 
 
 class CannotConnect(HomeAssistantError):

@@ -1,6 +1,6 @@
 {
   "domain": "vsslctrl",
-  "name": "VSSL Controller",
+  "name": "VSSL",
   "version": "0.0.1",
   "codeowners": [
     "@vsslctrl"
@@ -12,7 +12,5 @@
   "iot_class": "local_push",
   "requirements": [],
   "ssdp": [],
-  "zeroconf": [
-    {"type":"_googlecast._tcp.local.","properties":{"md":"vssl*"}}
-  ]
+  "zeroconf": ["_airplay._tcp.local."]
 }

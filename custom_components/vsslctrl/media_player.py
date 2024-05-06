@@ -15,9 +15,9 @@ from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN
+from .base import VsslBaseEntity
 
-from vsslctrl import Vssl
-from vsslctrl.zone import Zone
+from vsslctrl import Vssl, Zone, VSSL_NAME
 from vsslctrl.transport import ZoneTransport
 from vsslctrl.track import TrackMetadata
 
@@ -38,7 +38,7 @@ async def async_setup_entry(
     async_add_entities(entities)
 
 
-class VSSLZone(MediaPlayerEntity):
+class VSSLZone(VsslBaseEntity, MediaPlayerEntity):
     _attr_should_poll = False
     _attr_media_content_type = MediaType.MUSIC
     _attr_device_class = MediaPlayerDeviceClass.SPEAKER
@@ -58,11 +58,12 @@ class VSSLZone(MediaPlayerEntity):
     )
 
     def __init__(self, hass: HomeAssistant, zone: Zone, vssl: Vssl):
-        self.hass = hass
-        self.zone = zone
-        self.vssl = vssl
+        """Initialize the zone entity."""
+        super().__init__(vssl)
 
-        self.unique_id = f"{zone.serial}_ZONE_{zone.id}"
+        self.zone = zone
+
+        self._attr_unique_id = self.construct_unique_id(zone.serial, zone.id)
         self.media_position_updated_at = dt.utcnow()
 
         # Subscribe to events for this zone
@@ -73,12 +74,18 @@ class VSSLZone(MediaPlayerEntity):
             zone.id,
         )
 
+    @staticmethod
+    def construct_unique_id(serial: str, zone_id: int) -> str:
+        """Construct the unique id"""
+        return f"{serial}_ZONE_{zone_id}"
+
     #
     # Wrapper for the event bus events to update state-machine
     #
     async def _update_ha_state(self, data, entity, event_type) -> None:
         # print(f"update! {event_type} : {entity} : {data}")
-        self.async_write_ha_state()
+        if event_type != TrackMetadata.Events.PROGRESS_CHANGE:
+            self.async_write_ha_state()
 
     #
     # Decorate Helper to check if zone is connected when issuing commands

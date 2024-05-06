@@ -12,7 +12,7 @@ from vsslctrl.exceptions import VsslCtrlException
 
 from .const import DOMAIN, SERIAL, ZONES
 
-PLATFORMS: list[Platform] = [Platform.MEDIA_PLAYER]
+PLATFORMS: list[Platform] = [Platform.MEDIA_PLAYER, Platform.BUTTON]
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
