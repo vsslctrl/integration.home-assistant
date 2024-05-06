@@ -39,7 +39,6 @@ async def async_setup_entry(
 
 
 class VSSLZone(MediaPlayerEntity):
-
     _attr_should_poll = False
     _attr_media_content_type = MediaType.MUSIC
     _attr_device_class = MediaPlayerDeviceClass.SPEAKER
@@ -78,18 +77,21 @@ class VSSLZone(MediaPlayerEntity):
     # Wrapper for the event bus events to update state-machine
     #
     async def _update_ha_state(self, data, entity, event_type) -> None:
-        #print(f"update! {event_type} : {entity} : {data}")
+        # print(f"update! {event_type} : {entity} : {data}")
         self.async_write_ha_state()
-    
+
     #
     # Decorate Helper to check if zone is connected when issuing commands
-    # 
+    #
     def error_if_disconnected(func):
         async def wrapper(self, *args, **kwargs):
             if self.zone.connected:
                 return await func(self, *args, **kwargs)
             else:
-                raise HomeAssistantError(f"Zone is disconnected: {self.zone.settings.name}")
+                raise HomeAssistantError(
+                    f"Zone is disconnected: {self.zone.settings.name}"
+                )
+
         return wrapper
 
     @property

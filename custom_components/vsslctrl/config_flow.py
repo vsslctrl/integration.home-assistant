@@ -31,6 +31,7 @@ STEP_USER_DATA_SCHEMA = vol.Schema(
     }
 )
 
+
 class ConfigFlow(ConfigFlow, domain=DOMAIN):
     """Handle a config flow for VSSL Controller."""
 
@@ -113,7 +114,6 @@ class ConfigFlow(ConfigFlow, domain=DOMAIN):
             return self.async_abort(reason="zone_initialisation")
 
         return self.async_create_entry(title=name, data=data)
-
 
     @staticmethod
     def construct_unique_id(serial: str, zone_id: int) -> str:
