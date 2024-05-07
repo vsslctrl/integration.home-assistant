@@ -1,6 +1,6 @@
 """The VSSL Controller integration."""
 
-from __future__ import annotations
+import logging
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
@@ -12,8 +12,9 @@ from vsslctrl.exceptions import VsslCtrlException
 
 from .const import DOMAIN, SERIAL, ZONES
 
-PLATFORMS: list[Platform] = [Platform.MEDIA_PLAYER, Platform.BUTTON]
+_LOGGER = logging.getLogger(__name__)
 
+PLATFORMS: list[Platform] = [Platform.MEDIA_PLAYER, Platform.BUTTON]
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up VSSL Controller from a config entry."""
@@ -33,9 +34,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             raise VsslCtrlException
 
     except Exception as e:
+        _LOGGER.exception(e)
         await vssl.shutdown() 
         raise ConfigEntryNotReady from e
-
 
     hass.data[DOMAIN][entry.entry_id] = vssl
 
@@ -45,8 +46,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-
-    print('async_unload_entry')
     """Unload a config entry."""
     if unload_ok := await hass.config_entries.async_unload_platforms(entry, PLATFORMS):
         vssl = hass.data[DOMAIN].pop(entry.entry_id)

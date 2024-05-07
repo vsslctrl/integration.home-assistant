@@ -23,7 +23,6 @@ async def async_setup_entry(
 ) -> None:
     """Set buttons for device."""
     vssl = hass.data[DOMAIN][config_entry.entry_id]
-
     async_add_entities([RebootButton(vssl)])
 
 

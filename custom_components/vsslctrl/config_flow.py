@@ -13,6 +13,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
 
 from vsslctrl import Vssl
+from vsslctrl.discovery import fetch_zone_id_serial
 
 from .const import DOMAIN, SERIAL, ZONES, ZONE_1, ZONE_2, ZONE_3, ZONE_4, ZONE_5, ZONE_6
 
@@ -23,22 +24,13 @@ _LOGGER = logging.getLogger(__name__)
 STEP_USER_DATA_SCHEMA = vol.Schema(
     {
         vol.Required(ZONE_1, default="10.10.30.10"): str,
-        vol.Optional(ZONE_2, default="10.10.30.11"): str,
-        vol.Optional(ZONE_3, default="10.10.30.12"): str,
+        vol.Optional(ZONE_2): str,
+        vol.Optional(ZONE_3): str,
         vol.Optional(ZONE_4): str,
         vol.Optional(ZONE_5): str,
         vol.Optional(ZONE_6): str,
     }
 )
-
-
-#
-#
-# TODO, a reset button is requred for each zone
-#
-# Discovery
-#
-#
 
 
 class ConfigFlow(ConfigFlow, domain=DOMAIN):
@@ -129,11 +121,6 @@ class ConfigFlow(ConfigFlow, domain=DOMAIN):
     ) -> ConfigFlowResult:
         """Handle zeroconf discovery."""
         print(discovery_info)
-        # mac = dr.format_mac(discovery_info.properties["id"])
-        # await self.async_set_unique_id(mac)
-        # self._abort_if_unique_id_configured()
-        # self._discovered_host = discovery_info.hostname.rstrip(".")
-        # return await self.async_step_user()
 
 
 class CannotConnect(HomeAssistantError):
