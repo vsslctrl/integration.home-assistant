@@ -1,7 +1,7 @@
 {
     "config": {
         "abort": {
-            "zone_initialisation": "Failed to init one or more zones. Check Log."
+            "zone_initialisation": "Failed to initialise one or more zones. Check Log."
         },
         "error": {
             "cannot_connect": "Failed to connect",
@@ -11,14 +11,14 @@
         "step": {
             "user": {
                 "data": {
-                    "ZONE_1": "Zone 1 IP address",
-                    "ZONE_2": "Zone 2 IP address",
-                    "ZONE_3": "Zone 3 IP address",
-                    "ZONE_4": "Zone 4 IP address",
-                    "ZONE_5": "Zone 5 IP address",
-                    "ZONE_6": "Zone 6 IP address"
+                    "INPUT_1": "IP address",
+                    "INPUT_2": "IP address",
+                    "INPUT_3": "IP address",
+                    "INPUT_4": "IP address",
+                    "INPUT_5": "IP address",
+                    "INPUT_6": "IP address"
                 },
-                "description": "Enter the IP address of each zone of your VSSL device. Zone 1 is required",
+                "description": "Enter the IP address of each zone of your VSSL device which you would like to control. \n\n At least one zone is required, all zones must all belong to the same VSSL device",
                 "title": "Set up a new VSSL"
             }
         }
