@@ -32,16 +32,17 @@ async def async_setup_entry(
 
     entities = []
     for zone in vssl.zones.values():
-        entity = VSSLZone(hass, zone, vssl)
+        entity = VSSLZoneEntity(hass, zone, vssl)
         entities.append(entity)
 
     async_add_entities(entities)
 
 
-class VSSLZone(VsslBaseEntity, MediaPlayerEntity):
+class VSSLZoneEntity(VsslBaseEntity, MediaPlayerEntity):
     _attr_should_poll = False
     _attr_media_content_type = MediaType.MUSIC
     _attr_device_class = MediaPlayerDeviceClass.SPEAKER
+    _attr_volume_step = 0.5
 
     _attr_supported_features = (
         MediaPlayerEntityFeature.PLAY
@@ -185,11 +186,11 @@ class VSSLZone(VsslBaseEntity, MediaPlayerEntity):
 
     @error_if_disconnected
     async def async_volume_up(self) -> None:
-        self.zone.volume_raise(5)
+        self.zone.volume_raise(self.volume_step * 10)
 
     @error_if_disconnected
     async def async_volume_down(self) -> None:
-        self.zone.volume_lower(5)
+        self.zone.volume_lower(self.volume_step * 10)
 
     @property
     def media_title(self) -> str | None:

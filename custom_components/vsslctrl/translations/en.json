@@ -1,12 +1,15 @@
 {
     "config": {
         "abort": {
-            "zone_initialisation": "Failed to initialise one or more zones. Check Log."
+            "zone_initialisation": "Failed to initialise one or more zones. Check Log.",
+            "updated_vssl": "VSSL zones updated"
         },
         "error": {
             "cannot_connect": "Failed to connect",
-            "invalid_ip": "One or more IP address, is invalid",
-            "unknown": "Unexpected error"
+            "invalid_ip": "IP address is invalid",
+            "unknown": "Unexpected error",
+            "fetch_zone": "Error fetching zone info, is the zone connected?",
+            "not_unique": "IP address is not unique"
         },
         "step": {
             "user": {
@@ -18,7 +21,7 @@
                     "INPUT_5": "IP address",
                     "INPUT_6": "IP address"
                 },
-                "description": "Enter the IP address of each zone of your VSSL device which you would like to control. \n\n At least one zone is required, all zones must all belong to the same VSSL device",
+                "description": "Enter the IP address of each zone of your VSSL device which you would like to control. \n\n At least one zone is required, all zones should belong to the same VSSL device",
                 "title": "Set up a new VSSL"
             }
         }
