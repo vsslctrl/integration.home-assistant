@@ -60,7 +60,6 @@ class VSSLZoneEntity(VsslBaseEntity, MediaPlayerEntity):
         | MediaPlayerEntityFeature.VOLUME_MUTE
         | MediaPlayerEntityFeature.VOLUME_SET
         | MediaPlayerEntityFeature.VOLUME_STEP
-        | MediaPlayerEntityFeature.GROUPING
         # | MediaPlayerEntityFeature.REPEAT_SET
         # | MediaPlayerEntityFeature.SHUFFLE_SET
     )
@@ -77,18 +76,6 @@ class VSSLZoneEntity(VsslBaseEntity, MediaPlayerEntity):
 
         # Subscribe to events for this zone
         vssl.event_bus.subscribe(Vssl.Events.ALL, self._update_ha_state, zone.id)
-        vssl.event_bus.subscribe(
-            TrackMetadata.Events.PROGRESS_CHANGE,
-            self._update_progress_timestamp,
-            zone.id,
-        )
-
-        vssl.event_bus.subscribe(
-            ZoneGroup.Events.IS_MASTER_CHANGE, self._build_groups, zone.id
-        )
-        vssl.event_bus.subscribe(
-            ZoneGroup.Events.SOURCE_CHANGE, self._build_groups, zone.id
-        )
 
     @staticmethod
     def construct_unique_id(serial: str, zone_id: int) -> str:
@@ -100,7 +87,9 @@ class VSSLZoneEntity(VsslBaseEntity, MediaPlayerEntity):
     #
     async def _update_ha_state(self, data, entity, event_type) -> None:
         # print(f"update! {event_type} : {entity} : {data}")
-        if event_type != TrackMetadata.Events.PROGRESS_CHANGE:
+        if event_type == TrackMetadata.Events.PROGRESS_CHANGE:
+            await self._update_progress_timestamp(data)
+        else:
             self.async_write_ha_state()
 
     #
@@ -251,34 +240,3 @@ class VSSLZoneEntity(VsslBaseEntity, MediaPlayerEntity):
     async def async_media_seek(self, position: float) -> None:
         """Send seek command."""
         pass
-
-    async def _build_groups(self, data, entity, event_type) -> None:
-        if not self.zone.group.is_master:
-            self._attr_group_members = []
-            return
-
-        def _entity_id_from_zone(entity_registry, zone) -> str:
-            zone_uid = self.construct_unique_id(zone.serial, zone.id)
-            return entity_registry.async_get_entity_id(MP_DOMAIN, DOMAIN, zone_uid)
-
-        entity_registry = er.async_get(self.hass)
-
-        # convert the zone_ids into entities
-        group = [_entity_id_from_zone(entity_registry, self.zone)]
-        for zone in self.zone.group.members:
-            zone_entity = _entity_id_from_zone(entity_registry, zone)
-            group.append(zone_uid)
-
-        self._attr_group_members = group
-
-    async def async_join_players(self, group_members: list[str]) -> None:
-        """Join `group_members` as a player group with the current player."""
-        # await self.hass.async_add_executor_job(self.join_players, group_members)
-        self.zone.group.add_member(3)
-        print(group_members)
-
-    async def async_unjoin_player(self) -> None:
-        """Remove this player from any group."""
-        self.zone.group.leave()
-        print(self.zone.id)
-        # await self.hass.async_add_executor_job(self.unjoin_player)
