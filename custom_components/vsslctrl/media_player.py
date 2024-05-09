@@ -13,6 +13,11 @@ from homeassistant.const import STATE_UNAVAILABLE
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.entity_registry import async_get as entity_registry_get
+from homeassistant.components.media_player import DOMAIN as MP_DOMAIN
+
+from homeassistant.helpers import entity_registry as er
+from typing import cast
 
 from .const import DOMAIN
 from .base import VsslBaseEntity
@@ -20,6 +25,7 @@ from .base import VsslBaseEntity
 from vsslctrl import Vssl, Zone, VSSL_NAME
 from vsslctrl.transport import ZoneTransport
 from vsslctrl.track import TrackMetadata
+from vsslctrl.group import ZoneGroup
 
 
 async def async_setup_entry(
@@ -54,6 +60,7 @@ class VSSLZoneEntity(VsslBaseEntity, MediaPlayerEntity):
         | MediaPlayerEntityFeature.VOLUME_MUTE
         | MediaPlayerEntityFeature.VOLUME_SET
         | MediaPlayerEntityFeature.VOLUME_STEP
+        | MediaPlayerEntityFeature.GROUPING
         # | MediaPlayerEntityFeature.REPEAT_SET
         # | MediaPlayerEntityFeature.SHUFFLE_SET
     )
@@ -65,6 +72,7 @@ class VSSLZoneEntity(VsslBaseEntity, MediaPlayerEntity):
         self.zone = zone
 
         self._attr_unique_id = self.construct_unique_id(zone.serial, zone.id)
+        self._attr_group_members = []
         self.media_position_updated_at = dt.utcnow()
 
         # Subscribe to events for this zone
@@ -73,6 +81,13 @@ class VSSLZoneEntity(VsslBaseEntity, MediaPlayerEntity):
             TrackMetadata.Events.PROGRESS_CHANGE,
             self._update_progress_timestamp,
             zone.id,
+        )
+
+        vssl.event_bus.subscribe(
+            ZoneGroup.Events.IS_MASTER_CHANGE, self._build_groups, zone.id
+        )
+        vssl.event_bus.subscribe(
+            ZoneGroup.Events.SOURCE_CHANGE, self._build_groups, zone.id
         )
 
     @staticmethod
@@ -236,3 +251,34 @@ class VSSLZoneEntity(VsslBaseEntity, MediaPlayerEntity):
     async def async_media_seek(self, position: float) -> None:
         """Send seek command."""
         pass
+
+    async def _build_groups(self, data, entity, event_type) -> None:
+        if not self.zone.group.is_master:
+            self._attr_group_members = []
+            return
+
+        def _entity_id_from_zone(entity_registry, zone) -> str:
+            zone_uid = self.construct_unique_id(zone.serial, zone.id)
+            return entity_registry.async_get_entity_id(MP_DOMAIN, DOMAIN, zone_uid)
+
+        entity_registry = er.async_get(self.hass)
+
+        # convert the zone_ids into entities
+        group = [_entity_id_from_zone(entity_registry, self.zone)]
+        for zone in self.zone.group.members:
+            zone_entity = _entity_id_from_zone(entity_registry, zone)
+            group.append(zone_uid)
+
+        self._attr_group_members = group
+
+    async def async_join_players(self, group_members: list[str]) -> None:
+        """Join `group_members` as a player group with the current player."""
+        # await self.hass.async_add_executor_job(self.join_players, group_members)
+        self.zone.group.add_member(3)
+        print(group_members)
+
+    async def async_unjoin_player(self) -> None:
+        """Remove this player from any group."""
+        self.zone.group.leave()
+        print(self.zone.id)
+        # await self.hass.async_add_executor_job(self.unjoin_player)

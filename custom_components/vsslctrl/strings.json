@@ -20,6 +20,7 @@
       "unknown": "[%key:common::config_flow::error::unknown%]",
       "fetch_zone": "Error fetching zone info, is the zone connected?",
       "not_unique": "IP address is not unique"
+
     },
     "abort": {
       "zone_initialisation": "Failed to initialise one or more zones. Check Log.",
