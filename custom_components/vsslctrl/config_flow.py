@@ -107,6 +107,7 @@ class ConfigFlow(ConfigFlow, domain=DOMAIN):
             for zone_id, host in valid_zones[vssl_serial].items():
                 vssl.add_zone(int(zone_id), host)
 
+            _LOGGER.debug("awaiting vssl.initialise")
             await vssl.initialise()
 
             name = vssl.settings.name
