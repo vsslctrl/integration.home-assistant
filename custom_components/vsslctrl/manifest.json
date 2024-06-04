@@ -6,11 +6,11 @@
     "@vsslctrl"
   ],
   "config_flow": true,
-  "dependencies": ["vsslctrl==0.1.0.dev1"],
+  "dependencies": [],
   "documentation": "https://github.com/vsslctrl/vsslctrl",
   "homekit": {},
   "iot_class": "local_push",
-  "requirements": [],
+  "requirements": ["vsslctrl==0.1.0.dev1"],
   "ssdp": [],
   "zeroconf": [
     {"type":"_googlecast._tcp.local.","properties":{"md":"vssl*"}}
