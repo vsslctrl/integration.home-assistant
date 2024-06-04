@@ -49,6 +49,7 @@ class VSSLZoneEntity(VsslBaseEntity, MediaPlayerEntity):
     _attr_media_content_type = MediaType.MUSIC
     _attr_device_class = MediaPlayerDeviceClass.SPEAKER
     _attr_volume_step = 0.5
+    _attr_media_image_remotely_accessible = False
 
     _attr_supported_features = (
         MediaPlayerEntityFeature.PLAY
@@ -224,12 +225,14 @@ class VSSLZoneEntity(VsslBaseEntity, MediaPlayerEntity):
     @property
     def media_duration(self):
         """Return the duration of current playing media in seconds."""
-        return self.zone.track.duration / 1000
+        if self.zone.track.duration:
+            return self.zone.track.duration / 1000
 
     @property
     def media_position(self) -> int | None:
         """Position of current playing media in seconds."""
-        return self.zone.track.progress / 1000
+        if self.zone.track.progress:
+            return self.zone.track.progress / 1000
 
     async def _update_progress_timestamp(self, data, *args) -> None:
         if data is not None:
