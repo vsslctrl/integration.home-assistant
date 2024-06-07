@@ -64,6 +64,7 @@ class VSSLZoneEntity(VsslBaseEntity, MediaPlayerEntity):
         | MediaPlayerEntityFeature.VOLUME_STEP
         # | MediaPlayerEntityFeature.REPEAT_SET
         # | MediaPlayerEntityFeature.SHUFFLE_SET
+        # | MediaPlayerEntityFeature.SELECT_SOURCE
     )
 
     def __init__(self, hass: HomeAssistant, zone: Zone, vssl: Vssl):
