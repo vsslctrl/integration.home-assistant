@@ -1,3 +1,4 @@
+import asyncio
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.components.media_player import (
     MediaPlayerEntity,
@@ -243,3 +244,12 @@ class VSSLZoneEntity(VsslBaseEntity, MediaPlayerEntity):
     async def async_media_seek(self, position: float) -> None:
         """Send seek command."""
         pass
+
+    async def async_get_media_image(self) -> tuple[bytes | None, str | None]:
+        """Fetch media image of current playing image."""
+
+        # Prevent HA caching default cover art between songs
+        if self.zone.track.source == TrackMetadata.Sources.AIRPLAY:
+            await asyncio.sleep(1)
+
+        return await super().async_get_media_image()
