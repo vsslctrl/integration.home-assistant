@@ -27,6 +27,18 @@ from vsslctrl import Vssl, Zone, VSSL_NAME
 from vsslctrl.transport import ZoneTransport
 from vsslctrl.track import TrackMetadata
 from vsslctrl.group import ZoneGroup
+from vsslctrl.io import InputRouter
+
+SOURCES = {
+    InputRouter.Sources.STREAM: "Stream",
+    InputRouter.Sources.ANALOG_IN_1: "Analog Input 1",
+    InputRouter.Sources.ANALOG_IN_2: "Analog Input 2",
+    InputRouter.Sources.ANALOG_IN_3: "Analog Input 3",
+    InputRouter.Sources.ANALOG_IN_4: "Analog Input 4",
+    InputRouter.Sources.ANALOG_IN_5: "Analog Input 5",
+    InputRouter.Sources.ANALOG_IN_6: "Analog Input 6",
+    InputRouter.Sources.OPTICAL_IN: "Optical Input",
+}
 
 
 async def async_setup_entry(
@@ -62,9 +74,9 @@ class VSSLZoneEntity(VsslBaseEntity, MediaPlayerEntity):
         | MediaPlayerEntityFeature.VOLUME_MUTE
         | MediaPlayerEntityFeature.VOLUME_SET
         | MediaPlayerEntityFeature.VOLUME_STEP
+        | MediaPlayerEntityFeature.SELECT_SOURCE
         # | MediaPlayerEntityFeature.REPEAT_SET
         # | MediaPlayerEntityFeature.SHUFFLE_SET
-        # | MediaPlayerEntityFeature.SELECT_SOURCE
     )
 
     def __init__(self, hass: HomeAssistant, zone: Zone, vssl: Vssl):
@@ -76,6 +88,13 @@ class VSSLZoneEntity(VsslBaseEntity, MediaPlayerEntity):
         self._attr_unique_id = self.construct_unique_id(zone.serial, zone.id)
         self._attr_group_members = []
         self.media_position_updated_at = dt.utcnow()
+
+        self._supported_sources = {
+            key: value
+            for key, value in SOURCES.items()
+            if key in self.vssl.model.input_sources
+        }
+        self._attr_source_list = list(self._supported_sources.values())
 
         # Subscribe to events for this zone
         vssl.event_bus.subscribe(Vssl.Events.ALL, self._update_ha_state, zone.id)
@@ -245,6 +264,32 @@ class VSSLZoneEntity(VsslBaseEntity, MediaPlayerEntity):
     async def async_media_seek(self, position: float) -> None:
         """Send seek command."""
         pass
+
+    @property
+    def source(self):
+        """Current source"""
+        source = self.zone.input.source.value
+        if source in self._supported_sources:
+            return self._supported_sources[source]
+
+        return SOURCES[InputRouter.Sources.STREAM]
+
+    def _get_real_source(self, source_str):
+        for key, val in self._supported_sources.items():
+            if val == source_str:
+                return key
+        return None
+
+    async def async_select_source(self, source):
+        """Select input source."""
+        real_source = self._get_real_source(source)
+        if real_source is not None:
+            if real_source == InputRouter.Sources.STREAM:
+                self.zone.input.priority = InputRouter.Priorities.STREAM
+            else:
+                self.zone.input.priority = InputRouter.Priorities.LOCAL
+
+            self.zone.input.source = real_source
 
     async def async_get_media_image(self) -> tuple[bytes | None, str | None]:
         """Fetch media image of current playing image."""
