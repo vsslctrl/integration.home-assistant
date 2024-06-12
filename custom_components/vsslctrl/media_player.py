@@ -49,7 +49,7 @@ class VSSLZoneEntity(VsslBaseEntity, MediaPlayerEntity):
     _attr_should_poll = False
     _attr_media_content_type = MediaType.MUSIC
     _attr_device_class = MediaPlayerDeviceClass.SPEAKER
-    _attr_volume_step = 0.5
+    _attr_volume_step = 0.2
     _attr_media_image_remotely_accessible = False
 
     _attr_supported_features = (
