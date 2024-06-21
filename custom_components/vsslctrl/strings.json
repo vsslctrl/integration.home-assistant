@@ -5,12 +5,12 @@
         "title": "Set up a new VSSL",
         "description": "Enter the IP address of each zone of your VSSL device which you would like to control. \n\n At least one zone is required, all zones should belong to the same VSSL device",
         "data": {
-          "INPUT_1": "IP address",
-          "INPUT_2": "IP address",
-          "INPUT_3": "IP address",
-          "INPUT_4": "IP address",
-          "INPUT_5": "IP address",
-          "INPUT_6": "IP address"
+          "INPUT_1": "Zone 1 IP address*",
+          "INPUT_2": "Zone 2 IP address",
+          "INPUT_3": "Zone 3 IP address",
+          "INPUT_4": "Zone 4 IP address",
+          "INPUT_5": "Zone 5 IP address",
+          "INPUT_6": "Zone 6 IP address"
         }
       }
     },

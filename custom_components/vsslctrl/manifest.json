@@ -1,7 +1,6 @@
 {
   "domain": "vsslctrl",
   "name": "VSSL",
-  "version": "0.1.4.dev1",
   "codeowners": [
     "@vsslctrl"
   ],
@@ -10,9 +9,12 @@
   "documentation": "https://github.com/vsslctrl/vsslctrl",
   "homekit": {},
   "iot_class": "local_push",
+  "issue_tracker": "https://github.com/vsslctrl/integration.home-assistant/issues",
   "requirements": ["vsslctrl==0.1.4.dev1"],
   "ssdp": [],
+  "version": "0.1.4.dev1",
   "zeroconf": [
     {"type":"_googlecast._tcp.local.","properties":{"md":"vssl*"}}
   ]
 }
+
