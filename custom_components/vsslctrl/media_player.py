@@ -68,15 +68,12 @@ class VSSLZoneEntity(VsslBaseEntity, MediaPlayerEntity):
         MediaPlayerEntityFeature.PLAY
         | MediaPlayerEntityFeature.PAUSE
         | MediaPlayerEntityFeature.STOP
-        | MediaPlayerEntityFeature.SEEK
         | MediaPlayerEntityFeature.NEXT_TRACK
         | MediaPlayerEntityFeature.PREVIOUS_TRACK
         | MediaPlayerEntityFeature.VOLUME_MUTE
         | MediaPlayerEntityFeature.VOLUME_SET
         | MediaPlayerEntityFeature.VOLUME_STEP
         | MediaPlayerEntityFeature.SELECT_SOURCE
-        # | MediaPlayerEntityFeature.REPEAT_SET
-        # | MediaPlayerEntityFeature.SHUFFLE_SET
     )
 
     def __init__(self, hass: HomeAssistant, zone: Zone, vssl: Vssl):
@@ -177,18 +174,10 @@ class VSSLZoneEntity(VsslBaseEntity, MediaPlayerEntity):
         else:
             return RepeatMode.OFF
 
-    async def async_set_repeat(self, repeat: RepeatMode) -> None:
-        """Set repeat mode."""
-        pass
-
     @property
     def shuffle(self) -> bool | None:
         """Boolean if shuffle is enabled."""
         return self.zone.transport.is_shuffle
-
-    async def async_set_shuffle(self, shuffle: bool) -> None:
-        """Set shuffle mode."""
-        pass
 
     @property
     def is_volume_muted(self):
@@ -260,10 +249,6 @@ class VSSLZoneEntity(VsslBaseEntity, MediaPlayerEntity):
             self.media_position_updated_at = dt.utcnow()
         else:
             self.media_position_updated_at = None
-
-    async def async_media_seek(self, position: float) -> None:
-        """Send seek command."""
-        pass
 
     @property
     def source(self):
