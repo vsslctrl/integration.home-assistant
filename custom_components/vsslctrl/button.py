@@ -27,7 +27,7 @@ async def async_setup_entry(
 
 
 class RebootButton(VsslBaseEntity, ButtonEntity):
-    """Defines a ONVIF reboot button."""
+    """Defines a reboot button."""
 
     _attr_device_class = ButtonDeviceClass.RESTART
     _attr_entity_category = EntityCategory.CONFIG

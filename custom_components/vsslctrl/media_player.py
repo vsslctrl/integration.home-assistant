@@ -1,4 +1,5 @@
 import asyncio
+import logging
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.components.media_player import (
     MediaPlayerEntity,
@@ -28,6 +29,8 @@ from vsslctrl.transport import ZoneTransport
 from vsslctrl.track import TrackMetadata
 from vsslctrl.group import ZoneGroup
 from vsslctrl.io import InputRouter
+
+_LOGGER = logging.getLogger(__name__)
 
 SOURCES = {
     InputRouter.Sources.STREAM: "Stream",
@@ -105,7 +108,8 @@ class VSSLZoneEntity(VsslBaseEntity, MediaPlayerEntity):
     # Wrapper for the event bus events to update state-machine
     #
     async def _update_ha_state(self, data, entity, event_type) -> None:
-        # print(f"update! {event_type} : {entity} : {data}")
+        _LOGGER.debug(f"Event: {event_type} : {entity} : {data}")
+
         if event_type == TrackMetadata.Events.PROGRESS_CHANGE:
             await self._update_progress_timestamp(data)
         else:
