@@ -22,4 +22,5 @@ class VsslBaseEntity(Entity):
             manufacturer=VSSL_NAME,
             sw_version=self.vssl.sw_version,
             serial_number=self.vssl.serial,
+            model=self.vssl.model.name,
         )
