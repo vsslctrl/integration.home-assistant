@@ -77,7 +77,7 @@ class ConfigFlow(ConfigFlow, domain=DOMAIN):
         # that this is actually a valid VSSL zone IP
         valid_zones = {}
         errors = {}
-        vssl_serial = None  # jsut limit to one VSSL device
+        vssl_serial = None  # limit to one VSSL device
         for key, host in zones.items():
             try:
                 if host:
