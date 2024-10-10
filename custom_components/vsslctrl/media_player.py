@@ -89,6 +89,7 @@ class VSSLZoneEntity(VsslBaseEntity, MediaPlayerEntity):
         self._attr_group_members = []
         self.media_position_updated_at = dt.utcnow()
 
+        # Filter the sources based on the device
         self._supported_sources = {
             key: value
             for key, value in SOURCES.items()
