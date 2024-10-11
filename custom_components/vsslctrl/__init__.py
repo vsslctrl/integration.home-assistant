@@ -1,4 +1,4 @@
-"""The VSSL Controller integration."""
+"""The VSSL integration."""
 
 import logging
 
@@ -9,20 +9,23 @@ from homeassistant.exceptions import ConfigEntryNotReady
 
 from vsslctrl import Vssl
 from vsslctrl.exceptions import VsslCtrlException
+from vsslctrl.device import Models as DeviceModels
 
-from .const import DOMAIN, SERIAL, ZONES
+from .const import DOMAIN, SERIAL, ZONES, MODEL
 
 _LOGGER = logging.getLogger(__name__)
 
 PLATFORMS: list[Platform] = [Platform.MEDIA_PLAYER, Platform.BUTTON, Platform.SWITCH]
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Set up VSSL Controller from a config entry."""
+    """Set up VSSL from a config entry."""
 
     hass.data.setdefault(DOMAIN, {})
 
     try:
-        vssl = Vssl()
+        # Get the device model from entry
+        model = DeviceModels.get_model_by_name(entry.data.get(MODEL))
+        vssl = Vssl(model)
         zones = entry.data.get(ZONES)
 
         for zone_id, zone_ip in zones.items():

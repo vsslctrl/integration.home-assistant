@@ -14,15 +14,22 @@
         "step": {
             "user": {
                 "data": {
-                    "INPUT_1": "IP address",
-                    "INPUT_2": "IP address",
-                    "INPUT_3": "IP address",
-                    "INPUT_4": "IP address",
-                    "INPUT_5": "IP address",
-                    "INPUT_6": "IP address"
+                    "INPUT_MODEL": "Model"
                 },
-                "description": "Enter the IP address of each zone of your VSSL device which you would like to control. \n\nAt least one zone is required, all zones entered here should belong to the same VSSL device. \n\nYou can add multiple VSSL devices by adding multiple entries of the integration.",
+                "description": "Select VSSL Model",
                 "title": "Set up a new VSSL"
+            },
+            "addressing": {
+                "data": {
+                    "INPUT_ZONE_IP_1": "IP address",
+                    "INPUT_ZONE_IP_2": "IP address",
+                    "INPUT_ZONE_IP_3": "IP address",
+                    "INPUT_ZONE_IP_4": "IP address",
+                    "INPUT_ZONE_IP_5": "IP address",
+                    "INPUT_ZONE_IP_6": "IP address"
+                },
+                "description": "Enter the IP address of each zone of your {vssl_model} which you would like to control.",
+                "title": "Set up a new VSSL {vssl_model}"
             }
         }
     }
