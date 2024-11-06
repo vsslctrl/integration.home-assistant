@@ -5,6 +5,7 @@ Home Assistant integration based on [vsslctrl](https://github.com/vsslctrl/vsslc
 Looking for **A1** and **A.1x** testers, please get in touch if your interested in helping: <vsslcontrolled@proton.me>
 
 Tested on:
+ - **A.1** software version **p15265.033.3703**
  - **A.3** software version **p12013.141.3703**
  - **A.3x** software version **p15305.016.3701**
  - **A.6x** software version **p15305.017.3701**
