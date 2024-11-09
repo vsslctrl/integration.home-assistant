@@ -34,6 +34,8 @@ _LOGGER = logging.getLogger(__name__)
 
 SOURCES = {
     InputRouter.Sources.STREAM: "Stream",
+    InputRouter.Sources.BUS_IN_1: "Bus 1",
+    InputRouter.Sources.BUS_IN_2: "Bus 2",
     InputRouter.Sources.ANALOG_IN_1: "Analog Input 1",
     InputRouter.Sources.ANALOG_IN_2: "Analog Input 2",
     InputRouter.Sources.ANALOG_IN_3: "Analog Input 3",

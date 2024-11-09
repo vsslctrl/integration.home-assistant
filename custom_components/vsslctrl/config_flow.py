@@ -197,11 +197,11 @@ class ConfigFlow(ConfigFlow, domain=DOMAIN):
                     # Abort with reason
                     return self.async_abort(reason="updated_vssl")
 
+            # Create a new entry
+            return self.async_create_entry(title=name, data=data)
+
         except Exception as e:
             _LOGGER.exception(e)
             return self.async_abort(reason="zone_initialisation")
         finally:
             await vssl.shutdown()
-
-        # Create a new entry
-        return self.async_create_entry(title=name, data=data)

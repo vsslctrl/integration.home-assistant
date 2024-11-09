@@ -28,8 +28,8 @@
                     "INPUT_ZONE_IP_5": "IP address",
                     "INPUT_ZONE_IP_6": "IP address"
                 },
-                "description": "Enter the IP address of each zone of your {vssl_model} which you would like to control.",
-                "title": "Set up a new VSSL {vssl_model}"
+                "description": "Enter the IP address of each zone you want to control.",
+                "title": "Set up a VSSL {vssl_model}"
             }
         }
     }
