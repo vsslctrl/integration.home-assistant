@@ -29,6 +29,7 @@ from vsslctrl.transport import ZoneTransport
 from vsslctrl.track import TrackMetadata
 from vsslctrl.group import ZoneGroup
 from vsslctrl.io import InputRouter
+from vsslctrl.data_structure import DeviceFeatureFlags
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -78,18 +79,22 @@ class VSSLZoneEntity(VsslBaseEntity, MediaPlayerEntity):
         | MediaPlayerEntityFeature.VOLUME_MUTE
         | MediaPlayerEntityFeature.VOLUME_SET
         | MediaPlayerEntityFeature.VOLUME_STEP
-        | MediaPlayerEntityFeature.SELECT_SOURCE
     )
 
     def __init__(self, hass: HomeAssistant, zone: Zone, vssl: Vssl):
         """Initialize the zone entity."""
         super().__init__(vssl)
 
+        # vssl is init in super()
         self.zone = zone
 
         self._attr_unique_id = self.construct_unique_id(zone.serial, zone.id)
         self._attr_group_members = []
         self.media_position_updated_at = dt.utcnow()
+
+        # Check if model supports source selection
+        if self.vssl.model.supports_feature(DeviceFeatureFlags.INPUT_ROUTING):
+            self._attr_supported_features |= MediaPlayerEntityFeature.SELECT_SOURCE
 
         # Filter the sources based on the device
         self._supported_sources = {
@@ -100,7 +105,7 @@ class VSSLZoneEntity(VsslBaseEntity, MediaPlayerEntity):
         self._attr_source_list = list(self._supported_sources.values())
 
         # Subscribe to events for this zone
-        vssl.event_bus.subscribe(Vssl.Events.ALL, self._update_ha_state, zone.id)
+        self.vssl.event_bus.subscribe(Vssl.Events.ALL, self._update_ha_state, zone.id)
 
     @staticmethod
     def construct_unique_id(serial: str, zone_id: int) -> str:
