@@ -163,7 +163,7 @@ class ConfigFlow(ConfigFlow, domain=DOMAIN):
 
             # Add zones to VSSL device
             for zone_id, host in valid_zones[vssl_serial].items():
-                vssl.add_zone(int(zone_id), host)
+                vssl.add_zone(host, int(zone_id))
 
             _LOGGER.info("Awaiting VSSL initialization")
             await vssl.initialise()

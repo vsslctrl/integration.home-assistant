@@ -28,8 +28,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         vssl = Vssl(model)
         zones = entry.data.get(ZONES)
 
-        for zone_id, zone_ip in zones.items():
-            vssl.add_zone(int(zone_id), zone_ip)
+        for zone_id, host in zones.items():
+            vssl.add_zone(host, int(zone_id))
 \
         await vssl.initialise()
 

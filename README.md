@@ -1,17 +1,24 @@
 # VSSL
 Home Assistant integration based on [vsslctrl](https://github.com/vsslctrl/vsslctrl) for controlling [VSSL's](https://www.vssl.com/) range of streaming amplifiers.
 
-## Help
+## Testers Needed
 Looking for **A1** and **A.1x** testers, please get in touch if your interested in helping: <vsslcontrolled@proton.me>
 
+## Coverage
+
 Tested on:
- - **A.1** software version **p15265.033.3703**
- - **A.3** software version **p12013.141.3703**
- - **A.3x** software version **p15305.016.3701**
- - **A.6x** software version **p15305.017.3701**
+| Model       | Software Version | User Reported |
+| ------------|---------  | -------------
+| A.1       | p15265.033.3703    | ✔️
+| A.3       | p12013.141.3703     | ✔️
+| A.3x       | p15305.016.3701     | 
+| A.6x       | p15305.017.3701     | ✔️
 
 ## Important
-There should not be any *[VSSL Agent's](https://vssl.gitbook.io/vssl-rest-api/getting-started/start)* running on the same network. If you dont know what this is, then you can ignore this notice.
+
+There should not be any *[VSSL Agent's](https://vssl.gitbook.io/vssl-rest-api/getting-started/start)* running on the network. If you dont know what this is, then you can ignore this notice.
+
+ **`vsslctrl` is not endorsed or affiliated with [VSSL](https://www.vssl.com/) in any manner.**
 
 ## Installation
 
