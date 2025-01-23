@@ -47,10 +47,12 @@ class DebugSwitch(VsslBaseEntity, SwitchEntity):
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn the switch on."""
+        _LOGGER.warning(f"vsslctrl debugging enabled")
         await self._set_logging_level(logging.DEBUG)
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn the switch off."""
+        _LOGGER.info(f"vsslctrl debugging disabled")
         await self._set_logging_level(logging.INFO)
 
     async def _set_logging_level(self, logging_level: int) -> None:

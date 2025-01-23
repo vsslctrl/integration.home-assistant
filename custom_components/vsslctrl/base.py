@@ -24,3 +24,10 @@ class VsslBaseEntity(Entity):
             serial_number=self.vssl.serial,
             model=self.vssl.model.name,
         )
+
+    #
+    # Check availability.
+    # This is used in a event_bus subscription on the entities
+    #
+    async def _check_entity_availability(self, data, entity, event_type) -> None:
+        self.async_write_ha_state()

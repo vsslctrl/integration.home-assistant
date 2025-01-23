@@ -30,6 +30,7 @@ from vsslctrl.track import TrackMetadata
 from vsslctrl.group import ZoneGroup
 from vsslctrl.io import InputRouter
 from vsslctrl.data_structure import DeviceFeatureFlags
+from vsslctrl.event_bus import EventBus
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -105,7 +106,7 @@ class VSSLZoneEntity(VsslBaseEntity, MediaPlayerEntity):
         self._attr_source_list = list(self._supported_sources.values())
 
         # Subscribe to events for this zone
-        self.vssl.event_bus.subscribe(Vssl.Events.ALL, self._update_ha_state, zone.id)
+        self.vssl.event_bus.subscribe(EventBus.WILDCARD, self._update_ha_state, zone.id)
 
     @staticmethod
     def construct_unique_id(serial: str, zone_id: int) -> str:
@@ -136,6 +137,10 @@ class VSSLZoneEntity(VsslBaseEntity, MediaPlayerEntity):
                 )
 
         return wrapper
+
+    @property
+    def available(self):
+        return self.zone.connected
 
     @property
     def name(self):
@@ -277,6 +282,7 @@ class VSSLZoneEntity(VsslBaseEntity, MediaPlayerEntity):
                 return key
         return None
 
+    @error_if_disconnected
     async def async_select_source(self, source):
         """Select input source."""
         real_source = self._get_real_source(source)
