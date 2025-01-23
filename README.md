@@ -31,7 +31,7 @@ If you dont have HACS installed, follow [documentation here](https://hacs.xyz/do
 3. Add `https://github.com/vsslctrl/integration.home-assistant`
 4. Select `Integration` as category
 4. Search `VSSL` in `Repository Name`, download it and restart HA
-5. Go to `settings` -> `Devices & Service` -> `Add Intigration` and search for `VSSL`
+5. Go to `settings` -> `Devices & Service` -> `Add Integration` and search for `VSSL`
 6. Follow prompts to add VSSL device
 
 ![VSSL Device](screenshot.png)

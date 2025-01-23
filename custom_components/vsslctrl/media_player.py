@@ -108,6 +108,12 @@ class VSSLZoneEntity(VsslBaseEntity, MediaPlayerEntity):
         # Subscribe to events for this zone
         self.vssl.event_bus.subscribe(EventBus.WILDCARD, self._update_ha_state, zone.id)
 
+    async def async_will_remove_from_hass(self):
+        """Called when the entity is about to be removed."""
+        await super().async_will_remove_from_hass()
+        # Unsubscribe to events for this zone
+        self.vssl.event_bus.unsubscribe(EventBus.WILDCARD, self._update_ha_state)
+
     @staticmethod
     def construct_unique_id(serial: str, zone_id: int) -> str:
         """Construct the unique id"""

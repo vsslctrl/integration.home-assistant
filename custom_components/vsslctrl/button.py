@@ -56,6 +56,14 @@ class DeviceRestartButton(VsslBaseEntity, ButtonEntity):
             APIBase.Events.PREFIX + EventBus.WILDCARD, self._check_entity_availability
         )
 
+    async def async_will_remove_from_hass(self):
+        """Called when the entity is about to be removed."""
+        await super().async_will_remove_from_hass()
+        # Unsubscribe to events for this zone
+        self.vssl.event_bus.unsubscribe(
+            APIBase.Events.PREFIX + EventBus.WILDCARD, self._check_entity_availability
+        )
+
     async def async_press(self) -> None:
         """Reboot all zones."""
         self.vssl.reboot()
@@ -83,6 +91,14 @@ class ZoneRestartButton(VsslBaseEntity, ButtonEntity):
             APIBase.Events.PREFIX + EventBus.WILDCARD,
             self._check_entity_availability,
             self.zone.id,
+        )
+
+    async def async_will_remove_from_hass(self):
+        """Called when the entity is about to be removed."""
+        await super().async_will_remove_from_hass()
+        # Unsubscribe to events for this zone
+        self.vssl.event_bus.unsubscribe(
+            APIBase.Events.PREFIX + EventBus.WILDCARD, self._check_entity_availability
         )
 
     async def async_press(self) -> None:
