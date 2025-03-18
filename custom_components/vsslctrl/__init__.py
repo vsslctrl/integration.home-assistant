@@ -24,7 +24,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     try:
         # Get the device model from entry
-        model = DeviceModels.get_model_by_name(entry.data.get(MODEL))
+        entry_model = entry.data.get(MODEL)
+
+        if entry_model is None:
+            raise VsslCtrlException('Entry has no VSSL model. Try add another entry using the same IP addresses and select correct model.')
+
+        model = DeviceModels.get_model_by_name(entry_model)
         vssl = Vssl(model)
         zones = entry.data.get(ZONES)
 
