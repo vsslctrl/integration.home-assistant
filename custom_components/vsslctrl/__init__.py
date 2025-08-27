@@ -11,11 +11,12 @@ from vsslctrl import Vssl
 from vsslctrl.exceptions import VsslCtrlException
 from vsslctrl.device import Models as DeviceModels
 
-from .const import DOMAIN, SERIAL, ZONES, MODEL
+from .const import DOMAIN, SERIAL_KEY, ZONES_KEY, MODEL_KEY
 
 _LOGGER = logging.getLogger(__name__)
 
 PLATFORMS: list[Platform] = [Platform.MEDIA_PLAYER, Platform.BUTTON, Platform.SWITCH]
+
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up VSSL from a config entry."""
@@ -23,30 +24,26 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hass.data.setdefault(DOMAIN, {})
 
     try:
-        # Get the device model from entry
-        entry_model = entry.data.get(MODEL)
+        vssl_core = Vssl()
 
-        if entry_model is None:
-            raise VsslCtrlException('Entry has no VSSL model. Try add another entry using the same IP addresses and select correct model.')
+        zones = entry.data.get(ZONES_KEY)
 
-        model = DeviceModels.get_model_by_name(entry_model)
-        vssl = Vssl(model)
-        zones = entry.data.get(ZONES)
+        for host in zones.values():
+            vssl_core.add_zone(host)
 
-        for zone_id, host in zones.items():
-            vssl.add_zone(host, int(zone_id))
-\
-        await vssl.initialise()
+        await vssl_core.initialise()
 
-        if vssl.serial != entry.data.get(SERIAL):
-            raise VsslCtrlException
+        if vssl_core.serial != entry.data.get(SERIAL_KEY):
+            raise VsslCtrlException(
+                f"vssl serial {vssl_core.serial} and entry serial {entry.data.get(SERIAL_KEY)} do not match"
+            )
 
     except Exception as e:
         _LOGGER.exception(e)
-        await vssl.shutdown() 
+        await vssl_core.shutdown()
         raise ConfigEntryNotReady from e
 
-    hass.data[DOMAIN][entry.entry_id] = vssl
+    hass.data[DOMAIN][entry.entry_id] = vssl_core
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
@@ -56,7 +53,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a config entry."""
     if unload_ok := await hass.config_entries.async_unload_platforms(entry, PLATFORMS):
-        vssl = hass.data[DOMAIN].pop(entry.entry_id)
-        await vssl.shutdown() 
+        vssl_core = hass.data[DOMAIN].pop(entry.entry_id)
+        await vssl_core.shutdown()
 
     return unload_ok

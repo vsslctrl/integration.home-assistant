@@ -106,7 +106,9 @@ class VSSLZoneEntity(VsslBaseEntity, MediaPlayerEntity):
         self._attr_source_list = list(self._supported_sources.values())
 
         # Subscribe to events for this zone
-        self.vssl.event_bus.subscribe(EventBus.WILDCARD, self._update_ha_state, zone.id)
+        self.vssl.event_bus.subscribe(
+            EventBus.WILDCARD, self._update_ha_state, zone.host
+        )
 
     async def async_will_remove_from_hass(self):
         """Called when the entity is about to be removed."""

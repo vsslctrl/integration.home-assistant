@@ -15,7 +15,7 @@ from .base import VsslBaseEntity
 
 from vsslctrl import Vssl, Zone, VSSL_NAME
 from vsslctrl.event_bus import EventBus
-from vsslctrl.api_base import APIBase
+from vsslctrl.api_alpha import APIAlpha
 
 
 async def async_setup_entry(
@@ -28,10 +28,12 @@ async def async_setup_entry(
 
     entities = []
 
-    # Zone Reboot
-    for zone in vssl.zones.values():
-        entity = ZoneRestartButton(zone)
-        entities.append(entity)
+    # Single zone devices only need a reboot device
+    if vssl.model.is_multizone:
+        # Zone Reboot
+        for zone in vssl.zones.values():
+            entity = ZoneRestartButton(zone)
+            entities.append(entity)
 
     # Device Reboot
     entities.append(DeviceRestartButton(vssl))
@@ -53,7 +55,7 @@ class DeviceRestartButton(VsslBaseEntity, ButtonEntity):
 
         # Subscribe to all zone the connection events
         self.vssl.event_bus.subscribe(
-            APIBase.Events.PREFIX + EventBus.WILDCARD, self._check_entity_availability
+            APIAlpha.Events.PREFIX + EventBus.WILDCARD, self._check_entity_availability
         )
 
     async def async_will_remove_from_hass(self):
@@ -61,7 +63,7 @@ class DeviceRestartButton(VsslBaseEntity, ButtonEntity):
         await super().async_will_remove_from_hass()
         # Unsubscribe to events for this zone
         self.vssl.event_bus.unsubscribe(
-            APIBase.Events.PREFIX + EventBus.WILDCARD, self._check_entity_availability
+            APIAlpha.Events.PREFIX + EventBus.WILDCARD, self._check_entity_availability
         )
 
     async def async_press(self) -> None:
@@ -88,9 +90,9 @@ class ZoneRestartButton(VsslBaseEntity, ButtonEntity):
 
         # # Subscribe to only this zones connection events
         self.vssl.event_bus.subscribe(
-            APIBase.Events.PREFIX + EventBus.WILDCARD,
+            APIAlpha.Events.PREFIX + EventBus.WILDCARD,
             self._check_entity_availability,
-            self.zone.id,
+            self.zone.host,
         )
 
     async def async_will_remove_from_hass(self):
@@ -98,7 +100,7 @@ class ZoneRestartButton(VsslBaseEntity, ButtonEntity):
         await super().async_will_remove_from_hass()
         # Unsubscribe to events for this zone
         self.vssl.event_bus.unsubscribe(
-            APIBase.Events.PREFIX + EventBus.WILDCARD, self._check_entity_availability
+            APIAlpha.Events.PREFIX + EventBus.WILDCARD, self._check_entity_availability
         )
 
     async def async_press(self) -> None:
