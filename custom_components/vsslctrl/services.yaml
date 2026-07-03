@@ -1,0 +1,36 @@
+play_announcement:
+  name: Play announcement
+  description: >-
+    Play an audio file (a chime, TTS clip, etc.) as an announcement on VSSL
+    zones at a set volume. Ducks and then resumes whatever was playing.
+  target:
+    entity:
+      integration: vsslctrl
+      domain: media_player
+  fields:
+    url:
+      name: URL
+      description: >-
+        URL of the audio file to play. Must be reachable by the amplifier on the
+        LAN (e.g. a file in Home Assistant's /config/www served at /local/).
+      required: true
+      example: "http://homeassistant.local:8123/local/chime.wav"
+      selector:
+        text:
+    volume:
+      name: Volume
+      description: Announcement volume (0-100). Defaults to the zone's current volume.
+      required: false
+      example: 30
+      selector:
+        number:
+          min: 0
+          max: 100
+          mode: slider
+    all_zones:
+      name: All zones
+      description: Play on every zone of the device instead of only the targeted zone(s).
+      required: false
+      default: false
+      selector:
+        boolean:
