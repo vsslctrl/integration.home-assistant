@@ -19,7 +19,11 @@ from homeassistant.helpers.entity_registry import async_get as entity_registry_g
 from homeassistant.components.media_player import DOMAIN as MP_DOMAIN
 
 from homeassistant.helpers import entity_registry as er
+from homeassistant.helpers import config_validation as cv, entity_platform
+import voluptuous as vol
 from typing import cast
+
+SERVICE_PLAY_ANNOUNCEMENT = "play_announcement"
 
 from .const import DOMAIN
 from .base import VsslBaseEntity
@@ -62,6 +66,17 @@ async def async_setup_entry(
         entities.append(entity)
 
     async_add_entities(entities)
+
+    platform = entity_platform.async_get_current_platform()
+    platform.async_register_entity_service(
+        SERVICE_PLAY_ANNOUNCEMENT,
+        {
+            vol.Required("url"): cv.string,
+            vol.Optional("volume"): vol.All(vol.Coerce(int), vol.Range(min=0, max=100)),
+            vol.Optional("all_zones", default=False): cv.boolean,
+        },
+        "async_play_announcement",
+    )
 
 
 class VSSLZoneEntity(VsslBaseEntity, MediaPlayerEntity):
@@ -223,6 +238,17 @@ class VSSLZoneEntity(VsslBaseEntity, MediaPlayerEntity):
     async def async_set_volume_level(self, volume: float) -> None:
         """Set volume level, range 0..1."""
         self.zone.volume = int(volume * 100)
+
+    async def async_play_announcement(
+        self, url: str, volume: int | None = None, all_zones: bool = False
+    ) -> None:
+        """Play an announcement (chime / TTS / audio URL) on this zone.
+
+        Plays at `volume` (0-100, defaults to the zone's current volume) and
+        ducks then resumes whatever was playing. `all_zones` plays on every zone
+        of the device. The URL must be reachable by the amplifier on the LAN.
+        """
+        self.zone.play_url(url, all_zones, volume)
 
     @error_if_disconnected
     async def async_volume_up(self) -> None:
