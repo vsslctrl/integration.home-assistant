@@ -34,6 +34,27 @@ If you dont have HACS installed, follow [documentation here](https://hacs.xyz/do
 
 ![VSSL Device](screenshot.png)
 
+## Playing Announcements
+
+The `vsslctrl.play_announcement` service plays an audio URL as an announcement on one or
+more VSSL zones — ducking and then resuming current playback automatically. A common use
+case is playing a door chime via automation.
+
+1. **Get an audio file** — e.g. a chime from [SoundBible](https://soundbible.com/).
+2. **Host it locally** so VSSL can reach it over your network: upload it to `/config/www`
+   (e.g. via the **File Editor** add-on) and rename it to something simple, like `chime.mp3`.
+   It's then served at `http://homeassistant.local:8123/local/chime.mp3`.
+3. **Create an automation** with your desired trigger/conditions, and add the
+   **VSSL: Play announcement** action.
+4. **Configure the action:**
+   - **Target** — the VSSL zone(s) to play on
+   - **URL** — your hosted file's address
+   - **All zones** *(optional)* — play on every zone regardless of target
+   - **Volume** *(optional)* — announcement volume, independent of current playback volume
+5. **Save and test** the automation.
+
+![VSSL Device](announcement.png)
+
 **...TODO**
 - Discovery (vsslctrl already has function)
-- More functions e.g EQ
+- More functions e.g EQ No newline at end of file
